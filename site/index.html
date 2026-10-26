@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html,body{margin:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<title>London Landmarks 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<style>
+/* Layout: one long page. Sticky navy header with all eight stops as tabs; a short intro; then one band per sight (3D stage + fact card). */
+:root {
+  --bg: #EDF0F5;
+  --band: #E3E8F0;
+  --surface: #FFFFFF;
+  --ink: #14203B;
+  --muted: #586378;
+  --rule: #D8DEE8;
+  --navy: #1A2B5C;
+  --on-navy: #FFFFFF;
+  --on-navy-muted: #B9C3DD;
+  --red: #D42A33;
+  --bar: #2B53B5;
+  --gold: #9A6F0E;
+  --tint: #F4EEDD;
+  --sky-top: #C9DDF1;
+  --sky-bottom: #F3EEE3;
+  --night-top: #08122A;
+  --night-bottom: #22305A;
+  --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --head-h: 120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1221; --band: #0F182B; --surface: #131C30; --ink: #E6EBF4; --muted: #9BA6BC; --rule: #26314B;
+    --navy: #0E1834; --on-navy-muted: #8E9AB8; --red: #EF4B53; --bar: #3D66CC; --gold: #E2B640;
+    --tint: #1D2539; --sky-top: #2A3E62; --sky-bottom: #141E33; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1221; --band: #0F182B; --surface: #131C30; --ink: #E6EBF4; --muted: #9BA6BC; --rule: #26314B;
+  --navy: #0E1834; --on-navy-muted: #8E9AB8; --red: #EF4B53; --bar: #3D66CC; --gold: #E2B640;
+  --tint: #1D2539; --sky-top: #2A3E62; --sky-bottom: #141E33; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--navy); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--bar); outline-offset: 2px; }
+
+/* header with all tabs */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--navy); color: var(--on-navy); }
+.top .wrap { display: flex; align-items: center; gap: 18px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: none; text-decoration: none; }
+.brand b { font-size: 18px; font-weight: 800; font-stretch: 110%; line-height: 1.1; }
+.roundel { position: relative; width: 46px; height: 32px; flex: none; }
+.roundel::before { content: ""; position: absolute; left: 7px; top: 0; width: 32px; height: 32px; border-radius: 50%; border: 6px solid var(--red); background: #fff; }
+.roundel span { position: absolute; left: 0; right: 0; top: 10px; height: 12px; background: var(--bar); color: #fff; font-size: 7px; font-weight: 700; letter-spacing: .1em; text-align: center; line-height: 12px; }
+.tabs { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs li { flex: 1 1 104px; min-width: 0; }
+.tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 100%; padding: 7px 6px; border-radius: 10px; text-decoration: none; text-align: center; font-size: 13px; font-weight: 600; line-height: 1.15; color: var(--on-navy);
+  background: color-mix(in srgb, var(--on-navy) 8%, transparent); border: 1px solid color-mix(in srgb, var(--on-navy) 16%, transparent); transition: background .2s, border-color .2s; }
+.tab i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11px; font-weight: 800; border: 2px solid currentColor; }
+.tab:hover { background: color-mix(in srgb, var(--on-navy) 16%, transparent); }
+.tab[aria-current="true"] { background: var(--red); border-color: var(--red); }
+.tab[aria-current="true"] i { background: #fff; color: var(--red); border-color: #fff; }
+.tab .short { display: none; }
+
+/* intro */
+.hero { padding-block: 44px 36px; }
+.hero .eyebrow { margin: 0 0 8px; }
+.hero h1 { margin: 0; font-size: clamp(34px, 5.4vw, 64px); line-height: 1; font-weight: 800; font-stretch: 115%; letter-spacing: -.015em; text-wrap: balance; max-width: 16ch; }
+.team { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.team li:first-child { font-size: 14px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.team li + li { padding: 7px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); font-weight: 700; }
+.hero p.lede { font-size: clamp(17px, 1.6vw, 20px); max-width: 60ch; margin: 16px 0 22px; color: var(--ink); }
+.how { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 15px; }
+.how li { display: block; }
+.how b { color: var(--ink); }
+.cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 12px 20px; border-radius: 12px; background: var(--red); color: #fff; font-weight: 700; text-decoration: none; }
+
+/* one band per sight */
+.sight { padding-block: 34px; scroll-margin-top: var(--head-h); }
+.sight:nth-of-type(odd) { background: var(--band); }
+.sight-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+.sight:nth-of-type(odd) .stage { order: 2; }
+.stage { position: relative; border-radius: 18px; overflow: hidden; min-height: 360px; height: clamp(400px, 64vh, 640px); background: linear-gradient(var(--sky-top), var(--sky-bottom)); }
+model-viewer { width: 100%; height: 100%; display: block; background: transparent; --poster-color: transparent; --progress-bar-color: var(--red); }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--muted); font-weight: 600; pointer-events: none; }
+/* the preview picture and the viewer's own progress bar show loading; this text is only for errors */
+.loading { display: none !important; }
+.loading.err { display: grid !important; }
+.tools { position: absolute; left: 12px; bottom: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 8px; pointer-events: none; }
+.tools > * { pointer-events: auto; }
+.tool { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink); border-radius: 999px; padding: 8px 13px; font-size: 14px; font-weight: 600; }
+.tool[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.tool.ar { background: var(--red); color: #fff; border-color: var(--red); }
+.tool svg { width: 16px; height: 16px; flex: none; }
+.hint { margin-left: auto; align-self: center; font-size: 13px; padding: 5px 11px; border-radius: 999px; background: color-mix(in srgb, var(--surface) 80%, transparent); color: var(--ink); }
+.badge { position: absolute; top: 12px; left: 12px; margin: 0; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .04em; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); border: 1px solid var(--rule); }
+
+.card { background: var(--surface); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; border: 1px solid var(--rule); }
+.eyebrow { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+.card h2 { margin: -6px 0 0; font-size: clamp(28px, 3vw, 38px); line-height: 1.05; font-weight: 800; font-stretch: 108%; text-wrap: balance; }
+.card .lede { margin: 0; max-width: 65ch; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 14px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.facts div { min-width: 0; }
+.facts dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); line-height: 1.25; }
+.facts dd { margin: 4px 0 0; font-size: 22px; font-weight: 800; font-stretch: 95%; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.dyk { display: flex; gap: 12px; background: var(--tint); border-radius: 14px; padding: 14px; }
+.dyk-icon { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--surface); display: grid; place-items: center; font-weight: 900; font-size: 18px; }
+.dyk h3 { margin: 0 0 2px; font-size: 14px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--gold); }
+.dyk p { margin: 0; font-size: 15px; }
+.credit { margin: auto 0 0; font-size: 13px; color: var(--muted); }
+.credit a { color: var(--ink); }
+
+footer { padding-block: 28px 40px; color: var(--muted); font-size: 13px; }
+footer p { margin: 0 0 6px; max-width: 90ch; }
+
+@media (max-width: 1080px) {
+  .top .wrap { flex-wrap: wrap; gap: 8px; }
+  .tabs { flex-basis: 100%; }
+  .tabs li { flex: 1 1 calc((100% - 18px) / 4); }
+}
+@media (max-width: 900px) {
+  .sight-grid { grid-template-columns: 1fr; }
+  .sight:nth-of-type(odd) .stage { order: 0; }
+  .stage { height: min(60vh, 480px); min-height: 320px; }
+  .hint { display: none; }
+}
+@media (max-width: 640px) {
+  .tabs { gap: 5px; }
+  .tabs li { flex: 1 1 calc((100% - 15px) / 4); }
+  .tab { gap: 3px; padding: 6px 2px; font-size: 12px; }
+  .tab .full { display: none; }
+  .tab .short { display: inline; }
+  .tab i { width: 18px; height: 18px; font-size: 10px; }
+  .brand b { font-size: 16px; }
+  .tool span { display: none; }
+  .tool { padding: 10px; }
+  .facts dd { font-size: 19px; }
+  .card { padding: 18px; }
+  .sight { padding-block: 22px; }
+  .hero { padding-block: 28px 24px; }
+}
+/* picture mode used to make the preview images */
+body.shot { background: transparent; }
+body.shot::before, body.shot > :not(.shotstage) { display: none !important; }
+.shotstage { position: fixed !important; inset: 0; height: auto !important; border-radius: 0 !important; background: transparent !important; }
+.shotstage .tools, .shotstage .loading, .shotstage [slot="ar-button"] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .tab { transition: none; } }
+
+</style>
+
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#intro"><span class="roundel" aria-hidden="true"><span>LONDON</span></span><b>London Landmarks 3D</b></a>
+    <nav aria-label="Sights" style="display:contents"><ol class="tabs" id="tabs"></ol></nav>
+  </div>
+</header>
+
+<section class="hero wrap" id="intro">
+  <p class="eyebrow">School project · Class 7V · Saratov, 2026</p>
+  <h1>Eight famous sights of London in 3D</h1>
+  <ul class="team" aria-label="Authors">
+    <li>Made by Class 7V:</li>
+    <li>O. V. Kochetova</li>
+    <li>A. A. Ilyushina</li>
+    <li>V. N. Gordeeva</li>
+  </ul>
+  <p class="lede">Scroll down to visit Buckingham Palace, the Tower, Big Ben and five more places. Most models are made from thousands of real photos, so they look just like the real buildings.</p>
+  <ul class="how">
+    <li><b>Drag</b> to turn a model</li>
+    <li><b>Scroll</b> or <b>pinch</b> to zoom</li>
+    <li>On a phone, tap <b>View in your room</b></li>
+  </ul>
+  <a class="cta" href="#palace" id="start">Start the tour ↓</a>
+</section>
+
+<main id="sights"></main>
+
+<footer class="wrap">
+  <p>School project “London and Its Sights” by O. V. Kochetova, A. A. Ilyushina and V. N. Gordeeva, Class 7V, Saratov, 2026.</p>
+</footer>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  const MODEL_VERSION = "13";
+  const SHOT = new URLSearchParams(location.search).get("shot"); // ?shot=<id> renders one model full-screen, used to make the preview pictures // bump when model files change, so browsers fetch the new ones
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // where each model came from (authors are named once in the footer)
+  const MODELS = {
+    palace: { orbit: "-25deg 58deg 62%", file: "palace", name: "BUCKINGHAM PALACE", author: "PeeJaa", license: "Sketchfab Free Standard", uid: "01688ca7321647fd9041b7db5c0e73d9" },
+    tower: { orbit: "-20deg 55deg 62%", file: "tower", name: "TOWER OF LONDON", author: "PeeJaa", license: "Sketchfab Free Standard", uid: "6ff05a730cfe429ea25da2d2b6e9905c" },
+    bigben: { file: "bigben", name: "Clock Tower (Big Ben)", author: "ManySince910", license: "CC BY 4.0", uid: "9a1c691fac774bcca4e2ba565c4c9d9b" },
+    eye: { orbit: "15deg 78deg 7m", target: "0m -1.1m -1.4m", fov: "30deg", file: "eye", name: "London eye", author: "mohamedhussien", license: "CC BY 4.0" },
+    opera: { orbit: "70deg 78deg 90%", file: "opera", name: "Royal Opera House", author: "3D Warehouse Staff", license: "3D Warehouse licence" },
+    square: { file: "square", name: "Nelsons Column", author: "hardingdave", license: "CC BY 4.0", uid: "6f42acbc26c3451aba570db6621fa19c" },
+    abbey: { orbit: "-50deg 80deg 65%", file: "abbey", name: "Westminster Abbey", author: "samixalam", license: "CC BY 4.0" },
+    gallery: { orbit: "0deg 62deg 65%", file: "gallery", name: "The National Gallery", author: "Si", license: "3D Warehouse licence" },
+  };
+
+  const SIGHTS = [
+    { id: "palace", name: "Buckingham Palace", short: "Palace", area: "Westminster",
+      lede: "The official London home of the British monarch. It is used for state ceremonies, receptions and banquets. Its garden is the largest private garden in London, and the Changing of the Guard takes place in front of it.",
+      facts: [["Rooms", "775"], ["Garden", "16 ha"], ["Royal home since", "1837"]],
+      dyk: "When the King is at home, the Royal Standard flies on the roof. When he is away, you can see the Union Flag." },
+    { id: "tower", name: "Tower of London", short: "Tower", area: "Tower Hill",
+      lede: "A castle on the north bank of the Thames, begun by William the Conqueror in 1078. It has been a palace, a prison, a mint and even a zoo. Today it keeps the Crown Jewels.",
+      facts: [["Begun", "1078"], ["Age", "~950 years"], ["Ravens", "6+"]],
+      dyk: "A legend says that if the ravens leave the Tower, the kingdom will fall. So at least six ravens always live there, looked after by the Ravenmaster." },
+    { id: "bigben", name: "Big Ben", short: "Big Ben", area: "Westminster",
+      lede: "Big Ben is the great bell in the clock tower of the Palace of Westminster, where Parliament meets. Since 2012 the tower has been called the Elizabeth Tower.",
+      facts: [["Height", "96 m"], ["Clock faces", "7 m"], ["Finished", "1859"]],
+      dyk: "The bell cracked soon after it started ringing. A small square piece was cut out so the crack would not grow. That is why Big Ben has its special sound." },
+    { id: "eye", name: "London Eye", short: "London Eye", area: "South Bank",
+      lede: "A giant observation wheel on the bank of the River Thames. One full turn takes about 30 minutes, and on a clear day you can see 40 km in every direction.",
+      facts: [["Height", "135 m"], ["Capsules", "32"], ["One turn", "30 min"]],
+      dyk: "There are 32 capsules, but they are numbered from 1 to 33. There is no number 13, because some people think it is unlucky." },
+    { id: "opera", name: "Royal Opera House", short: "Opera", area: "Covent Garden",
+      lede: "The most famous theatre in London and the home of The Royal Opera and The Royal Ballet. Ballets to Tchaikovsky’s music, like “The Sleeping Beauty”, are staged here.",
+      facts: [["Seats", "2,256"], ["Opened", "1858"], ["Opera & ballet", "since 1946"]],
+      dyk: "This is the third theatre on this spot. The first two burned down, in 1808 and in 1856." },
+    { id: "square", name: "Trafalgar Square", short: "Trafalgar", area: "Charing Cross",
+      lede: "The main square of London, named after the Battle of Trafalgar in 1805. In the middle stands Nelson’s Column, guarded by four bronze lions. Big celebrations and the country’s main Christmas tree are here.",
+      facts: [["Nelson’s Column", "52 m"], ["Bronze lions", "4"], ["Named", "1830"]],
+      dyk: "Every year Norway sends London a big Christmas tree for the square. It is a thank-you for Britain’s help in the Second World War." },
+    { id: "abbey", name: "Westminster Abbey", short: "Abbey", area: "Westminster",
+      lede: "A great Gothic church where English and British kings and queens have been crowned since 1066. More than 3,000 people are buried or remembered here, including famous writers in Poets’ Corner.",
+      facts: [["Coronations since", "1066"], ["Present church begun", "1245"], ["Buried here", "3,000+"]],
+      dyk: "Inside the abbey there are icons by the Russian icon painter Sergei Fyodorov. King Charles III was crowned here in 2023." },
+    { id: "gallery", name: "The National Gallery", short: "Gallery", area: "Trafalgar Square",
+      lede: "One of the greatest art museums in the world. It has about 2,300 paintings from the 13th to the early 20th century, including Van Gogh’s “Sunflowers”.",
+      facts: [["Founded", "1824"], ["Paintings", "2,300"], ["Entry", "Free"]],
+      dyk: "You do not need a ticket to visit the National Gallery. Entry is free for everyone." },
+  ];
+
+  const ICON = {
+    spin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>',
+    reset: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
+    full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+    ar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>',
+  };
+  
+  /* ---------- build the page ---------- */
+  const tabsEl = document.getElementById("tabs"), main = document.getElementById("sights");
+  SIGHTS.forEach(function (s, i) {
+    const li = document.createElement("li");
+    li.innerHTML = '<a class="tab" href="#' + s.id + '" data-id="' + s.id + '" aria-current="false"><i>' + (i + 1) + '</i><span class="full">' + s.name + '</span><span class="short">' + s.short + "</span></a>";
+    tabsEl.append(li);
+    const m = MODELS[s.id];
+    const sec = document.createElement("section");
+    sec.className = "sight"; sec.id = s.id; sec.setAttribute("aria-labelledby", "h-" + s.id);
+    sec.innerHTML =
+      '<div class="wrap sight-grid">' +
+        '<div class="stage">' +
+          '<model-viewer src="models/' + m.file + '.glb?v=' + MODEL_VERSION + '" poster="models/posters/' + s.id + '.webp?v=' + MODEL_VERSION + '" alt="3D model of ' + s.name + '" camera-controls touch-action="pan-y" ' +
+            (reduce ? "" : "auto-rotate auto-rotate-delay=\"1500\" rotation-per-second=\"18deg\" ") +
+            'interaction-prompt="none" loading="lazy" reveal="auto" shadow-intensity="1" exposure="' + (m.exposure || "1.05") + '" environment-image="neutral" ' +
+            'max-camera-orbit="auto 88deg 250%" ' + (m.orbit ? 'camera-orbit="' + m.orbit + '" ' : "") + (m.target ? 'camera-target="' + m.target + '" min-camera-orbit="auto auto 1m" ' : "") + (m.fov ? 'field-of-view="' + m.fov + '" ' : "") +
+            'ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto">' +
+            '<button slot="ar-button" class="tool ar" type="button" style="position:absolute;right:12px;top:12px">' + ICON.ar + "<span>View in your room</span></button>" +
+          "</model-viewer>" +
+          '<p class="loading">Loading the 3D model…</p>' +
+          '<div class="tools">' +
+            '<button type="button" class="tool" data-act="spin" aria-pressed="' + (!reduce) + '" title="Turn by itself">' + ICON.spin + "<span>Rotate</span></button>" +
+            '<button type="button" class="tool" data-act="reset" title="Reset view">' + ICON.reset + "<span>Reset</span></button>" +
+            '<button type="button" class="tool" data-act="full" title="Full screen">' + ICON.full + "<span>Full screen</span></button>" +
+            '<span class="hint">Drag to turn · scroll to zoom</span>' +
+          "</div>" +
+        "</div>" +
+        '<article class="card">' +
+          '<p class="eyebrow">Stop ' + (i + 1) + " of " + SIGHTS.length + " · " + s.area + "</p>" +
+          '<h2 id="h-' + s.id + '">' + s.name + "</h2>" +
+          '<p class="lede">' + s.lede + "</p>" +
+          '<dl class="facts">' + s.facts.map(function (f) { return "<div><dt>" + f[0] + "</dt><dd>" + f[1] + "</dd></div>"; }).join("") + "</dl>" +
+          '<div class="dyk"><div class="dyk-icon" aria-hidden="true">?</div><div><h3>Did you know?</h3><p>' + s.dyk + "</p></div></div>" +
+        "</article>" +
+      "</div>";
+    main.append(sec);
+  });
+
+  /* ---------- model controls ---------- */
+  document.querySelectorAll(".stage").forEach(function (st) {
+    const mv = st.querySelector("model-viewer");
+    // hide the "Loading" label once the model is in (the load event alone was not always caught)
+    const markLoaded = function () { if (mv.loaded) mv.setAttribute("data-loaded", ""); };
+    ["load", "progress", "model-visibility"].forEach(function (ev) { mv.addEventListener(ev, markLoaded); });
+    const poll = setInterval(function () { markLoaded(); if (mv.hasAttribute("data-loaded")) clearInterval(poll); }, 700);
+    mv.addEventListener("error", function () { const l = st.querySelector(".loading"); l.textContent = "This model could not load. Check the internet connection."; l.classList.add("err"); });
+    st.querySelectorAll(".tool[data-act]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        const act = b.dataset.act;
+        if (act === "spin") { mv.autoRotate = !mv.autoRotate; b.setAttribute("aria-pressed", mv.autoRotate ? "true" : "false"); }
+        if (act === "reset") { mv.cameraOrbit = mv.getAttribute("camera-orbit") || "auto auto auto"; mv.cameraTarget = mv.getAttribute("camera-target") || "auto auto auto"; mv.fieldOfView = mv.getAttribute("field-of-view") || "auto"; if (mv.resetTurntableRotation) mv.resetTurntableRotation(); if (mv.jumpCameraToGoal) mv.jumpCameraToGoal(); }
+        if (act === "full") {
+          try {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else if (st.requestFullscreen) st.requestFullscreen().catch(function () {});
+            else if (st.webkitRequestFullscreen) st.webkitRequestFullscreen();
+          } catch (e) { /* not available here */ }
+        }
+      });
+    });
+  });
+
+  /* ---------- picture mode: one model, full screen, no page around it ---------- */
+  if (SHOT && MODELS[SHOT]) {
+    const st = document.getElementById(SHOT).querySelector(".stage");
+    const mv = st.querySelector("model-viewer");
+    document.body.classList.add("shot");
+    st.classList.add("shotstage");
+    ["width:1200px", "height:800px", "right:auto", "bottom:auto"].forEach(function (d) { const kv = d.split(":"); st.style.setProperty(kv[0], kv[1], "important"); });
+    document.body.append(st);
+    mv.removeAttribute("poster");
+    mv.setAttribute("loading", "eager");
+    mv.autoRotate = false;
+    mv.addEventListener("load", function () { setTimeout(function () { document.title = "ready"; }, 1500); });
+    return;
+  }
+
+  /* ---------- quietly download the models one by one in the background ---------- */
+  window.addEventListener("load", function () {
+    if (navigator.connection && navigator.connection.saveData) return; // the phone asked to save data
+    const urls = SIGHTS.map(function (s) { return "models/" + MODELS[s.id].file + ".glb?v=" + MODEL_VERSION; });
+    (async function () {
+      for (const u of urls) {
+        try { await (await fetch(u, { priority: "low" })).arrayBuffer(); } catch (e) { /* the viewer will load it later */ }
+      }
+    })();
+  });
+
+  /* ---------- tabs and scrolling ---------- */
+  const header = document.getElementById("top");
+  new ResizeObserver(function () { document.documentElement.style.setProperty("--head-h", header.offsetHeight + 8 + "px"); }).observe(header);
+  function goTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }
+  document.addEventListener("click", function (e) {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    const id = a.getAttribute("href").slice(1);
+    goTo(id);
+    try { history.replaceState(null, "", "#" + id); } catch (err) { /* ignore */ }
+  });
+  const tabLinks = Array.from(document.querySelectorAll(".tab"));
+  function setTab(id) { tabLinks.forEach(function (t) { t.setAttribute("aria-current", t.dataset.id === id ? "true" : "false"); }); }
+  const spy = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) setTab(e.target.id); });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  document.querySelectorAll(".sight, .hero").forEach(function (s) { spy.observe(s); });
+  // QR codes in the presentation open the page at #sight
+  const fromHash = location.hash.slice(1);
+  if (fromHash && document.getElementById(fromHash)) {
+    setTimeout(function () { document.getElementById(fromHash).scrollIntoView({ block: "start" }); }, 60);
+  }
+})();
+</script>
+
+</body>
+</html>
